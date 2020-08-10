@@ -1,5 +1,5 @@
 # HoshinoAuthorizeSystem
-用于Hoshino的授权系统
+用于HoshinoV2的授权系统
 
 当前授权系统仅能管理用咖啡佬的服务层的功能
 
