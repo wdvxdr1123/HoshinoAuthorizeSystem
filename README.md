@@ -1,0 +1,2 @@
+# HoshinoAuthorizeSystem
+用于Hoshino的授权系统
