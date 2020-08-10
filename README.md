@@ -1,6 +1,8 @@
 # HoshinoAuthorizeSystem
 用于Hoshino的授权系统
+
 当前授权系统仅能管理用咖啡佬的服务层的功能
+
 下载后覆盖原来的hoshino文件夹，然后安装requirements.txt中的依赖就行了
 
 ### 使用方法
