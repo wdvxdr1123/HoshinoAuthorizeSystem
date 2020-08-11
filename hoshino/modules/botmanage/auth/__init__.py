@@ -1,16 +1,17 @@
-from nonebot import on_command, message_preprocessor
+from nonebot import on_command, scheduler
 import random
 import string
 import re
 import hoshino
-from hoshino import R, Service, priv, util, sucmd
+from hoshino import R, Service, priv, util, sucmd, msghandler
 from sqlitedict import SqliteDict
 from hoshino.typing import CQEvent
 from datetime import *
 
-key_dict = SqliteDict('./key.sqlite', autocommit=True)
-group_dict = SqliteDict('./group.sqlite', autocommit=True)
-today = datetime.now()
+key_dict = msghandler.key_dict
+group_dict = msghandler.group_dict
+
+sv = Service('auth', visible=False)
 
 
 @on_command('添加注册码', only_to_me=True)
@@ -53,6 +54,7 @@ async def say_hello(session):
     if not session.event.group_id:
         return
     gid = session.event.group_id
+    today = datetime.now()
     raw_text = session.event.message.extract_plain_text()
     key = raw_text[3:].strip()
     if key in key_dict:
@@ -72,6 +74,16 @@ async def say_hello(session):
         return
     gid = session.event.group_id
     if gid in group_dict:
-        await session.send('您的授权截止至'+group_dict[gid].isoformat())
+        await session.send('您的授权截止至' + group_dict[gid].isoformat())
     else:
         await session.send('您还没有获得授权，请联系维护组获取授权!')
+
+
+@sv.scheduled_job('cron', minute='*/2', jitter=20)
+async def auth_update():
+    today = datetime.now()
+    for key, value in group_dict.iteritems():
+        if value.__lt__(today):
+            group_dict.pop(key)
+            await sv.bot.send_group_msg(group_id=key, message='您的授权已到期！')
+            sv.logger.info(f"群{key}的授权到期!")
