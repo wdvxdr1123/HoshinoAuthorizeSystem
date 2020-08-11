@@ -3,6 +3,7 @@ from sqlitedict import SqliteDict
 from hoshino import CanceledException, message_preprocessor, trigger
 from hoshino.typing import CQEvent
 
+key_dict = SqliteDict('./key.sqlite', autocommit=True)
 group_dict = SqliteDict('./group.sqlite', autocommit=True)
 
 
