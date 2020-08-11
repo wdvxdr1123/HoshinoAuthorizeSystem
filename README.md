@@ -5,6 +5,9 @@
 
 下载后覆盖原来的hoshino文件夹，然后安装requirements.txt中的依赖就行了
 
+##更新
+支持yobot缝合板管理,将nonebot_plugin.py替换yobot/src/client下的文件即可
+
 ### 使用方法
 > 超级用户权限(私聊机器人)
 1. 添加注册码 30 : 添加一个时长为30天的授权码
