@@ -5,7 +5,7 @@
 
 下载后覆盖原来的hoshino文件夹，然后安装requirements.txt中的依赖就行了
 
-##更新
+## 更新
 支持yobot缝合板管理,将nonebot_plugin.py替换yobot/src/client下的文件即可
 
 ### 使用方法
