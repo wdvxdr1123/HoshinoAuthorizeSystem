@@ -55,8 +55,8 @@ async def say_hello(session):
         return
     gid = session.event.group_id
     today = datetime.now()
-    raw_text = session.event.message.extract_plain_text()
-    key = raw_text[3:].strip()
+    raw_text = session.event.message.extract_plain_text().strip()
+    key = raw_text[2:].strip()
     if key in key_dict:
         if gid in group_dict:
             group_dict[gid] = group_dict[gid] + timedelta(days=key_dict[key])
