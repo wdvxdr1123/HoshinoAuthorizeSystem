@@ -7,6 +7,11 @@ from hoshino import R, Service, priv, util, sucmd, msghandler
 from sqlitedict import SqliteDict
 from hoshino.typing import CQEvent
 from datetime import *
+import nonebot
+from .web_server import auth
+
+app = nonebot.get_bot().server_app    #
+app.register_blueprint(auth)          # 关闭网页服务请注释这两句
 
 key_dict = msghandler.key_dict
 group_dict = msghandler.group_dict
@@ -18,7 +23,7 @@ sv = Service('auth', visible=False)
 async def say_hello(session):
     if session.event.user_id not in hoshino.config.SUPERUSERS:
         return
-    key = ''.join(random.sample(string.ascii_letters + string.digits, 16))
+    key = web_server.gerenate_key()
     length = session.event.message.extract_plain_text()
     length = length[5:].strip()
     if length.isdigit():
