@@ -8,7 +8,19 @@
 ## 更新
 支持yobot缝合板管理,将nonebot_plugin.py替换yobot/src/client下的文件即可
 
-### 使用方法
+## 网页端使用方法
+1.从<https://github.com/wdvxdr1123/pcr-auth-vue/releases>下载编译好的前端
+
+2.将前端放入auth/vue文件夹中
+
+3.按照注释，修改__init__.py和web_server.py
+
+4.打开机器人公网访问
+
+####每次修改完网页端密码后必须清理浏览器缓存！！！
+
+## 使用方法
+所有指令与参数之间必须有<空格>(nonebot.on_command的特性...)
 > 超级用户权限(私聊机器人)
 1. 添加注册码 30 : 添加一个时长为30天的授权码
 2. 查看注册码 : 查看当前所有授权码

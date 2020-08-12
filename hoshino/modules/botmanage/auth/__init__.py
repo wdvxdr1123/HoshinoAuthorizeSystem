@@ -1,17 +1,14 @@
-from nonebot import on_command, scheduler
-import random
-import string
-import re
-import hoshino
-from hoshino import R, Service, priv, util, sucmd, msghandler
-from sqlitedict import SqliteDict
-from hoshino.typing import CQEvent
 from datetime import *
+
 import nonebot
+from nonebot import on_command
+
+import hoshino
+from hoshino import Service, msghandler
 from .web_server import auth
 
-app = nonebot.get_bot().server_app    #
-app.register_blueprint(auth)          # 关闭网页服务请注释这两句
+#app = nonebot.get_bot().server_app    # 打开网页服务请注释这两句
+#app.register_blueprint(auth)          # 打开网页服务请注释这两句
 
 key_dict = msghandler.key_dict
 group_dict = msghandler.group_dict

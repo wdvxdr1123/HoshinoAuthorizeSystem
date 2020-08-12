@@ -6,8 +6,7 @@ from quart import request, Blueprint, jsonify, render_template
 
 from hoshino import Service, priv, msghandler
 
-public_address = ''  # 修改为服务器公网ip
-manage_password = 'fkyou'  # 管理密码
+manage_password = 'test'  # 后端管理密码(请修改)
 key_dict = msghandler.key_dict
 group_dict = msghandler.group_dict
 
