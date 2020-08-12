@@ -82,7 +82,7 @@ async def say_hello(session):
         await session.send('您还没有获得授权，请联系维护组获取授权!')
 
 
-@sv.scheduled_job('cron', minute='*/2', jitter=20)
+@sv.scheduled_job('cron', minute='*/10', jitter=20)
 async def auth_update():
     today = datetime.now()
     for key, value in group_dict.iteritems():
