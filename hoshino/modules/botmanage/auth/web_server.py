@@ -1,3 +1,4 @@
+from datetime import *
 import string
 import random
 
@@ -6,18 +7,31 @@ from quart import request, Blueprint, jsonify, render_template
 
 from hoshino import Service, priv, msghandler
 
-manage_password = 'test'  # 后端管理密码(请修改)
+manage_password = 'test'  # 管理密码
 key_dict = msghandler.key_dict
 group_dict = msghandler.group_dict
 
 sv = Service('homework', manage_priv=priv.SUPERUSER, enable_on_default=True, visible=False)
-auth = Blueprint('auth', __name__, url_prefix='/auth', template_folder="./vue", static_folder='./vue', static_url_path='')
+auth = Blueprint('auth', __name__, url_prefix='/auth', template_folder="./vue", static_folder='./vue',
+                 static_url_path='')
 bot = nonebot.get_bot()
 app = bot.server_app
 
 
 def generate_key():
     return ''.join(random.sample(string.ascii_letters + string.digits, 16))
+
+
+def reg_group(gid, key):
+    if key in key_dict:
+        today = datetime.now()
+        if gid in group_dict:
+            group_dict[gid] = group_dict[gid] + timedelta(days=key_dict[key])
+        else:
+            group_dict[gid] = today + timedelta(days=key_dict[key])
+        key_dict.pop(key)
+        return True
+    return False
 
 
 @auth.route('/')
@@ -74,3 +88,12 @@ async def get_group():
         deadline = f'{value.year}-{value.month}-{value.day}'
         group_list.append({'gid': key, 'deadline': deadline})
     return jsonify(group_list)
+
+
+@auth.route('/api/activate', methods=['POST'])
+async def activate_group():
+    key = request.args.get('key')
+    gid = request.args.get('gid')
+    if reg_group(gid, key):
+        return 'success'
+    return 'failed'
