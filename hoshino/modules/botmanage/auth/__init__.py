@@ -30,7 +30,6 @@ async def produce_key(session):
     key_list = []
     for _ in range(key_num):
         new_key = util.add_key(duration)
-        print(new_key)
         key_list.append(new_key)
     await session.send(f'已生成{key_num}份{duration}天的卡密：\n' + '\n'.join(key_list))
 
@@ -116,15 +115,16 @@ async def group_kakin(session):
                 else:
                     await session.send("卡密似乎无效诶QwQ")
 
-
+#su可以查询指定群，群员只能查询当前群
 @on_command('查询授权', only_to_me=False)
 async def time_query(session):
     if not session.event.group_id:
+        if session.event.user_id not in hoshino.config.SUPERUSERS:
+            return
         if not session.current_arg:
             await session.finish('请发送“查询授权 群号”来进行指定群的授权查询')
         else:
             gid = session.current_arg.strip()
-            print(gid)
             if gid in group_dict:
                 await session.send('您的授权截止至' + group_dict[gid].isoformat())
             else:
@@ -137,8 +137,9 @@ async def time_query(session):
             else:
                 await session.send('您还没有获得授权QwQ')
         else:
+            if session.event.user_id not in hoshino.config.SUPERUSERS:
+                await session.finish('非运维组不能查询其他群的授权哟')
             gid = session.current_arg.strip()
-            print(gid)
             if gid in group_dict:
                 await session.send('您的授权截止至' + group_dict[gid].isoformat())
             else:
@@ -238,7 +239,7 @@ async def approve_group_invite(session):
 
 
 @on_command('检验卡密')
-async def view_aut_list(session):
+async def key_check(session):
     if session.event.group_id:
         return
     if not session.current_arg:
