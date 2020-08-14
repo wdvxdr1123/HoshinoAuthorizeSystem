@@ -3,7 +3,6 @@ from . import util
 from quart import request, Blueprint, jsonify, render_template
 from hoshino import Service, priv
 
-sv = Service('homework', manage_priv=priv.SUPERUSER, enable_on_default=True, visible=False)
 auth = Blueprint('auth', __name__, url_prefix='/auth', template_folder="./vue", static_folder='./vue',
                  static_url_path='')
 bot = nonebot.get_bot()
