@@ -2,11 +2,10 @@ import random
 import string
 from datetime import *
 
-from hoshino import msghandler, Service, priv
+from hoshino import msghandler, Service, priv, get_bot
 
 key_dict = msghandler.key_dict
 group_dict = msghandler.group_dict
-
 sv = Service('auth', manage_priv=priv.SUPERUSER, enable_on_default=True, visible=False)
 
 
@@ -20,12 +19,11 @@ def generate_key():
 def reg_group(gid, key):
     if key in key_dict:
         today = datetime.now()
-        if gid in group_dict:
-            group_dict[gid] = group_dict[gid] + timedelta(days=key_dict[key])
-        else:
-            group_dict[gid] = today + timedelta(days=key_dict[key])
+        key_duration = timedelta(days=key_dict[key])
+        left_time = group_dict[gid] if gid in group_dict else datetime.now()
+        group_dict[gid] = key_duration + left_time
         key_dict.pop(key)
-        return f"群【{gid}】充值成功！\n授权到期时间：{group_dict[gid].isoformat()}"
+        return group_dict[gid].isoformat()
     return False
 
 
@@ -56,7 +54,13 @@ def update_key(key, duration):
     return False
 
 
-def get_group_list():
+def update_group(gid, duration):
+    extra_duration = timedelta(days=duration)
+    left_time = group_dict[gid] if gid in group_dict else datetime.now()
+    group_dict[gid] = extra_duration + left_time
+
+
+async def get_group_list():
     group_list = []
     for key, value in group_dict.iteritems():
         deadline = f'{value.year}-{value.month}-{value.day}'
@@ -65,10 +69,18 @@ def get_group_list():
 
 
 def query_key(key):
-    if key in key_dict:
-        return key_dict[key]
-    else:
-        return 0
+    return key_dict[key] if key in key_dict else 0
+
+
+def query_group(gid):
+    return group_dict[gid].isoformat() if gid in group_dict else 0
+
+
+def transfer_group(old_gid, new_gid):
+    today = datetime.now()
+    left_time = group_dict[old_gid] - today if old_gid in group_dict else timedelta(days=0)
+    group_dict[new_gid] = left_time + (group_dict[new_gid] if new_gid in group_dict else today)
+    group_dict.pop(old_gid)
 
 
 @sv.scheduled_job('cron', minute='*/5', jitter=20)
