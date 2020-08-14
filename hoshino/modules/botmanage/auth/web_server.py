@@ -78,7 +78,24 @@ async def update_group():
 @auth.route('/api/activate', methods=['POST'])
 async def activate_group():
     key = request.args.get('key')
-    gid = request.args.get('gid')
+    gid = int(request.args.get('gid'))
     if util.reg_group(gid, key):
+        return 'success'
+    return 'failed'
+
+
+@auth.route('/api/notify/group', methods=['POST'])
+async def notify_group():
+    gid = int(request.args.get('gid'))
+    msg = request.args.get('msg')
+    if await util.notify_group(gid, msg):
+        return 'success'
+    return 'failed'
+
+
+@auth.route('/api/gun/group', methods=['POST'])
+async def gun_group():
+    gid = int(request.args.get('gid'))
+    if await util.gun_group(gid):
         return 'success'
     return 'failed'

@@ -1,8 +1,8 @@
 import random
 import string
 from datetime import *
-
-from hoshino import msghandler, Service, priv, get_bot
+from nonebot import CQHttpError
+from hoshino import msghandler, Service, priv, get_bot, get_self_ids
 
 key_dict = msghandler.key_dict
 group_dict = msghandler.group_dict
@@ -63,8 +63,12 @@ def update_group(gid, duration):
 async def get_group_list():
     group_list = []
     for key, value in group_dict.iteritems():
-        deadline = f'{value.year}-{value.month}-{value.day}'
-        group_list.append({'gid': key, 'deadline': deadline})
+        deadline = f'{value.year}-{value.month}-{value.day} {value.hour}:{value.minute}'
+        try:
+            group_info = await get_bot().get_group_info(group_id=key, no_cache=True)
+        except CQHttpError:
+            group_info = {'group_name': '未知'}
+        group_list.append({'gid': key, 'deadline': deadline, 'groupName': group_info['group_name']})
     return group_list
 
 
@@ -81,6 +85,22 @@ def transfer_group(old_gid, new_gid):
     left_time = group_dict[old_gid] - today if old_gid in group_dict else timedelta(days=0)
     group_dict[new_gid] = left_time + (group_dict[new_gid] if new_gid in group_dict else today)
     group_dict.pop(old_gid)
+
+
+async def gun_group(gid):
+    try:
+        await get_bot().set_group_leave(group_id=gid)
+    except CQHttpError:
+        return False
+    return True
+
+
+async def notify_group(gid, txt):
+    try:
+        await get_bot().send_group_msg(group_id=gid, message=txt)
+    except CQHttpError:
+        return False
+    return True
 
 
 @sv.scheduled_job('cron', minute='*/5', jitter=20)

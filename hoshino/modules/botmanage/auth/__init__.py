@@ -157,7 +157,10 @@ async def group_leave(session):
         return
     gid = int(session.current_arg.strip())
     await session.send('正在褪裙...')
-    await session.bot.set_group_leave(group_id=gid)
+    if await util.gun_group(gid):
+        await session.send('褪裙成功!')
+    else:
+        await session.send('褪裙失败!')
 
 
 # 自动接受(拒绝)已(未)充值的群的邀请
