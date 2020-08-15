@@ -63,7 +63,7 @@ def update_group(gid, duration):
 async def get_group_list():
     group_list = []
     for key, value in group_dict.iteritems():
-        deadline = f'{value.year}-{value.month}-{value.day} {value.hour}:{value.minute}'
+        deadline = f'{value.year}年{value.month}月{value.day}日 {value.hour}时{value.minute}分'
         try:
             group_info = await get_bot().get_group_info(group_id=key, no_cache=True)
         except CQHttpError:
