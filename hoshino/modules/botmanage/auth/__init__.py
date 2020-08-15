@@ -46,10 +46,10 @@ async def view_key_list(session):
 async def view_aut_list(session):
     if session.event.user_id not in hoshino.config.SUPERUSERS:
         return
-    group_list = util.get_group_list()
+    group_list = await util.get_group_list()
     msg = '======授权列表======\n'
     for items in group_list:
-        msg += '群号:' + items['gid'] + '\n截止日期:' + str(items['deadline']) + '天\n'
+        msg += '群号:' + items['gid'] + '\n截止日期:' + str(items['deadline'])
     await session.send(msg)
 
 
@@ -146,7 +146,7 @@ async def auth_status(session):
     gp_num = len(sgl)
     fr_num = len(frl)
     key_num = len(util.get_key_list())
-    agp_num = len(util.get_group_list())
+    agp_num = len(await util.get_group_list())
     msg = f'Bot账号：{sid}\n所在群数：{gp_num}\n好友数：{fr_num}\n授权群数：{agp_num}\n未使用卡密数：{key_num}'
     await session.send(msg)
 
