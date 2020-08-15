@@ -49,7 +49,7 @@ async def view_aut_list(session):
     group_list = await util.get_group_list()
     msg = '======授权列表======\n'
     for items in group_list:
-        msg += '群号:' + items['gid'] + '\n截止日期:' + str(items['deadline'])
+        msg += '群号:' + items['gid'] + '\n截止日期:' + str(items['deadline']) + '\n'
     await session.send(msg)
 
 
