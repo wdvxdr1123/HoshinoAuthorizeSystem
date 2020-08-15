@@ -88,22 +88,18 @@ async def time_query(session):
             return
         if not session.current_arg:
             await session.finish('请发送“查询授权 群号”来进行指定群的授权查询')
-        gid = session.current_arg.strip()
-        if deadline := util.query_group(gid):
-            await session.send('您的授权截止至' + deadline)
-        else:
-            await session.send('您还没有获得授权QwQ')
+        gid = int(session.current_arg.strip())
     else:
         if not session.current_arg:
             gid = session.event.group_id
         else:
             if session.event.user_id not in hoshino.config.SUPERUSERS:
                 await session.finish('非运维组不能查询其他群的授权哟')
-            gid = session.current_arg.strip()
-        if deadline := util.query_group(gid):
-            await session.send('您的授权截止至' + deadline)
-        else:
-            await session.send('您还没有获得授权QwQ')
+            gid = int(session.current_arg.strip())
+    if deadline := util.query_group(gid):
+        await session.send(f'群{gid}的授权截止至' + deadline)
+    else:
+        await session.send(f'群{gid}还没有获得授权QwQ')
 
 
 @on_command('授权', only_to_me=False)
