@@ -20,7 +20,7 @@ async def produce_key(session):
         await session.finish('格式输错了啦憨批！请按照“生成卡密 时长*数量”进行输入！')
     duration = int(m.group(1))
     key_num = int(m.group(2))
-    if key_num == 0:
+    if key_num == 0 or duration == 0:
         await session.finish('你搁那生你🐴空气呢？')
     key_list = []
     for _ in range(key_num):
@@ -49,7 +49,7 @@ async def view_aut_list(session):
     group_list = await util.get_group_list()
     msg = '======授权列表======\n'
     for items in group_list:
-        msg += '群号:' + items['gid'] + '\n截止日期:' + str(items['deadline'])
+        msg += '群号:' + items['gid'] + '\n截止日期:' + str(items['deadline']) + '\n'
     await session.send(msg)
 
 
@@ -63,6 +63,8 @@ async def group_kakin(session):
         gid = session.event.group_id
         key = session.current_arg.strip()
     else:
+        if not session.current_arg.strip():
+            await session.finish('使用卡密请发送“充值 卡密*群号”，发送前请仔细核对卡密哦\n')
         origin = session.current_arg.strip()
         pattern = re.compile(r'^(\w{16})\*(\d{5,15})$')
         m = pattern.match(origin)
@@ -86,6 +88,11 @@ async def time_query(session):
             return
         if not session.current_arg:
             await session.finish('请发送“查询授权 群号”来进行指定群的授权查询')
+        gid = session.current_arg.strip()
+        if deadline := util.query_group(gid):
+            await session.send('您的授权截止至' + deadline)
+        else:
+            await session.send('您还没有获得授权QwQ')
     else:
         if not session.current_arg:
             gid = session.event.group_id
@@ -93,10 +100,10 @@ async def time_query(session):
             if session.event.user_id not in hoshino.config.SUPERUSERS:
                 await session.finish('非运维组不能查询其他群的授权哟')
             gid = session.current_arg.strip()
-    if deadline := util.query_group(gid):
-        await session.send('您的授权截止至' + deadline)
-    else:
-        await session.send('您还没有获得授权QwQ')
+        if deadline := util.query_group(gid):
+            await session.send('您的授权截止至' + deadline)
+        else:
+            await session.send('您还没有获得授权QwQ')
 
 
 @on_command('授权', only_to_me=False)
@@ -174,7 +181,7 @@ async def approve_group_invite(session):
     if util.query_group(gid):
         await bot.set_group_add_request(flag=ev.flag, sub_type=ev.sub_type, approve=True)
     else:
-        await bot.set_group_add_request(flag=ev.flag, sub_type=ev.sub_type, approve=False, reason='请联系维护组!')
+        await bot.set_group_add_request(flag=ev.flag, sub_type=ev.sub_type, approve=False, reason='请先添加我为好友，按照“充值 卡密”的格式私聊进行充值哦~')
 
 
 @on_command('检验卡密')
